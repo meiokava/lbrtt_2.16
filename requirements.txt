@@ -1,0 +1,14 @@
+attrs @ file:///C:/b/abs_09s3y775ra/croot/attrs_1668696195628/work
+certifi==2022.12.7
+charset-normalizer==2.1.1
+distlib==0.3.6
+filelock==3.9.0
+idna==3.4
+jsonschema @ file:///C:/b/abs_6ccs97j_l8/croot/jsonschema_1676558690963/work
+numpy==1.24.2
+platformdirs==3.0.0
+pyrsistent @ file:///C:/ci_310/pyrsistent_1642117077485/work
+requests==2.28.1
+urllib3==1.26.13
+virtualenv==20.19.0
+wincertstore==0.2

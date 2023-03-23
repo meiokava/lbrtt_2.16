@@ -1,0 +1,12 @@
+[
+    {
+        "destination": "china",
+        "number_flight": 3,
+        "type_plane": "passangers"
+    },
+    {
+        "destination": "tokyo",
+        "number_flight": 2,
+        "type_plane": "official"
+    }
+]

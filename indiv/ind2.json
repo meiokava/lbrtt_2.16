@@ -1,0 +1,12 @@
+[
+    {
+        "destination": "japan",
+        "number_flight": 3,
+        "type_plane": "passangers"
+    },
+    {
+        "destination": "korea",
+        "number_flight": 3,
+        "type_plane": "official"
+    }
+]
