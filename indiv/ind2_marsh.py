@@ -3,7 +3,13 @@
 
 import json
 import sys
-import jsonschema
+from marshmallow import Schema, fields, ValidationError, EXCLUDE, INCLUDE
+
+
+class FlightsSchema(Schema):
+    dst = fields.Str()
+    nmb = fields.Integer()
+    tpe = fields.Str()
 
 
 def get_flight():
@@ -17,8 +23,8 @@ def get_flight():
     # the сreation of dictionary
     return {
         'destination': dst,
-        'number_flight': nmb,
-        'type_plane': tpe,
+        'numberFlight': nmb,
+        'typePlane': tpe,
     }
 
 
@@ -38,8 +44,8 @@ def display_flights(flights):
             '| {:^4} | {:^30} | {:^20} | {:^18} |'.format(
                 "№",
                 "Destination",
-                "Number of the flight",
-                "Type of the plane"
+                "NumberOfTheFlight",
+                "TypeOfThePlane"
             )
         )
         print(line)
@@ -48,13 +54,13 @@ def display_flights(flights):
                 '| {:>4} | {:<30} | {:<20} | {:>18} |'.format(
                     idx,
                     flight.get('destination', ''),
-                    flight.get('number_flight', ''),
-                    flight.get('type_plane', 0)
+                    flight.get('numberFlight', ''),
+                    flight.get('typePlane', 0)
                 )
             )
         print(line)
     else:
-        print('list is empty')
+        print('listIsEmpty')
 
 
 def select_flights(flights, t):
@@ -69,64 +75,21 @@ def select_flights(flights, t):
 
 
 def save_flights(file_name, flights):
+
     with open(file_name, "w", encoding="utf-8") as fout:
-        json.dump(flights, fout, ensure_ascii=False, indent=4)
+        json.dump(flights, fout,  ensure_ascii=False, indent=4)
 
 
 def load_flights(file_name):
-    schema = {
-        "type": "array",
-        "items": [
-            {
-                "type": "object",
-                "properties": {
-                    "destination": {
-                        "type": "string"
-                    },
-                    "number_flight": {
-                        "type": "integer"
-                    },
-                    "type_plane": {
-                        "type": "string"
-                    }
-                },
-                "required": [
-                    "destination",
-                    "number_flight",
-                    "type_plane"
-                ]
-            },
-            {
-                "type": "object",
-                "properties": {
-                    "destination": {
-                        "type": "string"
-                    },
-                    "number_flight": {
-                        "type": "integer"
-                    },
-                    "type_plane": {
-                        "type": "string"
-                    }
-                },
-                "required": [
-                    "destination",
-                    "number_flight",
-                    "type_plane"
-                ]
-            }
-        ]
-    }
     with open(file_name, "r", encoding="utf-8") as fin:
-        loadfile = json.load(fin)
-        validator = jsonschema.Draft7Validator(schema)
-        try:
-            if not validator.validate(loadfile):
-                print("Validation was successful")
-        except jsonschema.exceptions.ValidationError:
-            print("Validation error", file=sys.stderr)
-            exit()
-    return loadfile
+        data = json.load(fin)
+    try:
+        flg = FlightsSchema().load(data, many=True)
+        print("Validation was successful")
+        return flg
+    except ValidationError as err:
+        print("Error in validation")
+        print(err)
 
 
 def main():

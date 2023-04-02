@@ -3,7 +3,13 @@
 
 import json
 import sys
-import jsonschema
+from pydantic import BaseModel, ValidationError, validator
+
+
+class FlightsSchema(BaseModel):
+    dst: str
+    nmb: int
+    tpe: str
 
 
 def get_flight():
@@ -16,9 +22,9 @@ def get_flight():
 
     # the сreation of dictionary
     return {
-        'destination': dst,
-        'number_flight': nmb,
-        'type_plane': tpe,
+        'd': dst,
+        'n': nmb,
+        't': tpe,
     }
 
 
@@ -47,9 +53,9 @@ def display_flights(flights):
             print(
                 '| {:>4} | {:<30} | {:<20} | {:>18} |'.format(
                     idx,
-                    flight.get('destination', ''),
-                    flight.get('number_flight', ''),
-                    flight.get('type_plane', 0)
+                    flight.get('d', ''),
+                    flight.get('n', ''),
+                    flight.get('t', 0)
                 )
             )
         print(line)
@@ -74,59 +80,16 @@ def save_flights(file_name, flights):
 
 
 def load_flights(file_name):
-    schema = {
-        "type": "array",
-        "items": [
-            {
-                "type": "object",
-                "properties": {
-                    "destination": {
-                        "type": "string"
-                    },
-                    "number_flight": {
-                        "type": "integer"
-                    },
-                    "type_plane": {
-                        "type": "string"
-                    }
-                },
-                "required": [
-                    "destination",
-                    "number_flight",
-                    "type_plane"
-                ]
-            },
-            {
-                "type": "object",
-                "properties": {
-                    "destination": {
-                        "type": "string"
-                    },
-                    "number_flight": {
-                        "type": "integer"
-                    },
-                    "type_plane": {
-                        "type": "string"
-                    }
-                },
-                "required": [
-                    "destination",
-                    "number_flight",
-                    "type_plane"
-                ]
-            }
-        ]
-    }
     with open(file_name, "r", encoding="utf-8") as fin:
-        loadfile = json.load(fin)
-        validator = jsonschema.Draft7Validator(schema)
+        indata = json.load(fin)
         try:
-            if not validator.validate(loadfile):
-                print("Validation was successful")
-        except jsonschema.exceptions.ValidationError:
-            print("Validation error", file=sys.stderr)
-            exit()
-    return loadfile
+            for i in indata:
+                FlightsSchema.parse_raw(str(i).replace("'", '"'))
+            print("Validation was successful")
+            return indata
+        except ValidationError as err:
+            print("Error in validation")
+            print(err)
 
 
 def main():
